@@ -1,4 +1,6 @@
 /target
 /.idea
+.vscode/
+.vscode/*
 *.iml
 .DS_Store
