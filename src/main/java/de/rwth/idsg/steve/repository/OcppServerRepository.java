@@ -45,6 +45,7 @@ public interface OcppServerRepository {
 
     void insertMeterValues(String chargeBoxIdentity, List<MeterValue> list, int connectorId, Integer transactionId);
     void insertMeterValues(String chargeBoxIdentity, List<MeterValue> list, int transactionId);
+    String getNewestMeterValuesJSON(String chargeBoxIdentity, Integer connectorId);
 
     int insertTransaction(InsertTransactionParams params);
     void updateTransaction(UpdateTransactionParams params);

@@ -140,29 +140,10 @@ public class MeterValuesRestController {
         
         for (ChargePointSelect chargepoint : cps) {
             String chargeBoxId = chargepoint.getChargeBoxId();
-            String ocppProtocol = getOcppProtocol(chargeBoxId);
+            //String ocppProtocol = getOcppProtocol(chargeBoxId);
             Integer connectorId = params.getConnectorId();
-            /*
-            ClearChargingProfileParams transactionParams = new ClearChargingProfileParams();
-            transactionParams.setChargingProfilePk(params.getChargingProfileId());
-            transactionParams.setChargePointSelectList(cps);
-            // For other FilterTypes, parameters need to be added to the ApiChargingProfile Class.
-            transactionParams.setFilterType(ClearChargingProfileFilterType.ChargingProfileId);
-            Integer taskId;
-            taskId = switch (ocppProtocol) {
-                case "OCPP1.6J", "OCPP1.6S" -> client16.clearChargingProfile(transactionParams);
-                //case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> client15.setChargingProfile(transactionParams);
-                case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> -1;
-                //case "OCPP1.2" -> client12.dataTransfer(transactionParams, "SteveWebApi");
-                //default -> client12.dataTransfer(transactionParams, "SteveWebApi");
-                case "OCPP1.2" -> -1;
-                default -> -1;
-            };
-            if (taskId == -1) {
-                log.error("Current OCPP cersion does not support ChargingProfiles. Cancelling...");
-            }
-            return taskId;
-            */
+
+            return ocppServerRepository.getNewestMeterValuesJSON(chargeBoxId, connectorId);
 
         }
 
