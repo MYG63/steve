@@ -30,7 +30,10 @@ import de.rwth.idsg.steve.web.api.dto.ApiDataTransfer;
 import de.rwth.idsg.steve.web.api.dto.ApiTaskInfo;
 import de.rwth.idsg.steve.web.api.dto.ApiTaskList;
 import de.rwth.idsg.steve.web.dto.ChargePointQueryForm;
+import de.rwth.idsg.steve.web.dto.ocpp.ClearChargingProfileFilterType;
+import de.rwth.idsg.steve.web.dto.ocpp.ClearChargingProfileParams;
 import de.rwth.idsg.steve.web.dto.ocpp.DataTransferParams;
+import de.rwth.idsg.steve.web.dto.ocpp.SetChargingProfileParams;
 import de.rwth.idsg.steve.ocpp.task.DataTransferTask;
 import de.rwth.idsg.steve.ocpp.ws.ocpp12.Ocpp12WebSocketEndpoint;
 import de.rwth.idsg.steve.ocpp.ws.ocpp15.Ocpp15WebSocketEndpoint;
@@ -189,4 +192,89 @@ public class TaskRestController {
 
         return 1;
     }
+
+    // RS create SetChargingProfile task
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Bad Request", response = ApiErrorResponse.class),
+        @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
+        @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
+    )
+    @PostMapping(value = "createsetchargingprofiletask")
+    @ResponseBody
+    public Integer createSetChargingProfileTask(@Valid ApiChargingProfile params) {
+        log.info("Received createsetchargingprofiletask POST request via API! ");
+        
+        List<ChargePointSelect> cps = chargePointRepository.getChargePointSelect(params.getChargeBoxId());
+        
+        for (ChargePointSelect chargepoint : cps) {
+            String chargeBoxId = chargepoint.getChargeBoxId();
+            String ocppProtocol = getOcppProtocol(chargeBoxId);
+            SetChargingProfileParams transactionParams = new SetChargingProfileParams();
+            transactionParams.setChargingProfilePk(params.getChargingProfileId());
+            transactionParams.setChargePointSelectList(cps);
+            transactionParams.setConnectorId(params.getConnectorId());
+
+            Integer taskId;
+            taskId = switch (ocppProtocol) {
+                case "OCPP1.6J", "OCPP1.6S" -> client16.setChargingProfile(transactionParams);
+                //case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> client15.setChargingProfile(transactionParams);
+                case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> -1;
+                //case "OCPP1.2" -> client12.dataTransfer(transactionParams, "SteveWebApi");
+                //default -> client12.dataTransfer(transactionParams, "SteveWebApi");
+                case "OCPP1.2" -> -1;
+                default -> -1;
+            };
+            if (taskId == -1) {
+                log.error("Current OCPP cersion does not support ChargingProfiles. Cancelling...");
+            }
+            return taskId;
+
+        }
+
+        return 1;
+    }
+
+    // RS create ClearChargingProfile task
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Bad Request", response = ApiErrorResponse.class),
+        @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
+        @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
+    )
+    @PostMapping(value = "createclearchargingprofiletask")
+    @ResponseBody
+    public Integer createClearChargingProfileTask(@Valid ApiChargingProfile params) {
+        log.info("Received createclearchargingprofiletask POST request via API! ");
+        
+        List<ChargePointSelect> cps = chargePointRepository.getChargePointSelect(params.getChargeBoxId());
+        
+        for (ChargePointSelect chargepoint : cps) {
+            String chargeBoxId = chargepoint.getChargeBoxId();
+            String ocppProtocol = getOcppProtocol(chargeBoxId);
+            ClearChargingProfileParams transactionParams = new ClearChargingProfileParams();
+            transactionParams.setChargingProfilePk(params.getChargingProfileId());
+            transactionParams.setChargePointSelectList(cps);
+            // For other FilterTypes, parameters need to be added to the ApiChargingProfile Class.
+            transactionParams.setFilterType(ClearChargingProfileFilterType.ChargingProfileId);
+            Integer taskId;
+            taskId = switch (ocppProtocol) {
+                case "OCPP1.6J", "OCPP1.6S" -> client16.clearChargingProfile(transactionParams);
+                //case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> client15.setChargingProfile(transactionParams);
+                case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> -1;
+                //case "OCPP1.2" -> client12.dataTransfer(transactionParams, "SteveWebApi");
+                //default -> client12.dataTransfer(transactionParams, "SteveWebApi");
+                case "OCPP1.2" -> -1;
+                default -> -1;
+            };
+            if (taskId == -1) {
+                log.error("Current OCPP cersion does not support ChargingProfiles. Cancelling...");
+            }
+            return taskId;
+
+        }
+
+        return 1;
+    }
+
 }
