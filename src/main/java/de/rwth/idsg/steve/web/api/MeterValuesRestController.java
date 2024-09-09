@@ -131,9 +131,9 @@ public class MeterValuesRestController {
         @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
         @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
     )
-    @GetMapping(value = "metervalues")
+    @GetMapping(value = "newest")
     @ResponseBody
-    public String getMeterValues(@Valid ApiMeterValues params) {
+    public String getNewestMeterValues(@Valid ApiMeterValues params) {
         log.info("Received metervalues get request via API! ");
         
         List<ChargePointSelect> cps = chargePointRepository.getChargePointSelect(params.getChargeBoxId());
