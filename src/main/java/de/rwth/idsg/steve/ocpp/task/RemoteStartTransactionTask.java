@@ -34,6 +34,10 @@ public class RemoteStartTransactionTask extends CommunicationTask<RemoteStartTra
         super(params);
     }
 
+    public RemoteStartTransactionTask(OcppVersion ocppVersion, RemoteStartTransactionParams params, String caller) {
+        super(ocppVersion, params, caller);
+    }
+
     @Override
     public OcppCallback<String> defaultCallback() {
         return new StringOcppCallback();

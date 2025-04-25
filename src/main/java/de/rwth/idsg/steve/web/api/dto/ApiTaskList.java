@@ -1,6 +1,6 @@
 /*
  * SteVe - SteckdosenVerwaltung - https://github.com/steve-community/steve
- * Copyright (C) 2013-2025 SteVe Community Team
+ * Copyright (C) 2013-2024 SteVe Community Team
  * All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,28 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package de.rwth.idsg.steve.repository;
+package de.rwth.idsg.steve.web.api.dto;
 
-import de.rwth.idsg.steve.repository.dto.Transaction;
-import de.rwth.idsg.steve.repository.dto.TransactionDetails;
-import de.rwth.idsg.steve.web.dto.TransactionQueryForm;
-
-import java.io.Writer;
+import de.rwth.idsg.steve.repository.dto.TaskOverview;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
- * @author Sevket Goekay <sevketgokay@gmail.com>
- * @since 19.08.2014
+ * @author fnkbsi
+ * @since 18.10.2023
  */
-public interface TransactionRepository {
-    Transaction getTransaction(int transactionPk);
 
-    List<Transaction> getTransactions(TransactionQueryForm form);
-
-    void writeTransactionsCSV(TransactionQueryForm form, Writer writer);
-
-    List<Integer> getActiveTransactionIds(String chargeBoxId);
-    Integer getActiveTransactionId(String chargeBoxId, Integer connectorId);
-
-    TransactionDetails getDetails(int transactionPk);
+@Getter
+@Setter
+//@RequiredArgsConstructor
+public class ApiTaskList {
+    @ApiModelProperty(value = "List of tasks")
+    private List<TaskOverview> tasks;
 }

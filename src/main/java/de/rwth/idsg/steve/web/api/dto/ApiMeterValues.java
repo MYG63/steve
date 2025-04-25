@@ -1,6 +1,6 @@
 /*
  * SteVe - SteckdosenVerwaltung - https://github.com/steve-community/steve
- * Copyright (C) 2013-2025 SteVe Community Team
+ * Copyright (C) 2013-2024 SteVe Community Team
  * All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,30 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package de.rwth.idsg.steve.web.dto;
+package de.rwth.idsg.steve.web.api.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
- * @author Sevket Goekay <sevketgokay@gmail.com>
- * @since 18.09.2018
+ * @author rsyrnicki
+ * @since 09.08.2023
  */
+
 @Getter
 @Setter
-@ToString
-public class ConnectorStatusForm {
-    @ApiModelProperty(value = "Charge Box Id")
+//@RequiredArgsConstructor
+public class ApiMeterValues {
+    @ApiModelProperty(value = "Charge Box ID")
     private String chargeBoxId;
-    @ApiModelProperty(value = "Connector Status")
-    private String status;
-    @ApiModelProperty(value = "Strategy of listing the connector")
-    private Strategy strategy = Strategy.PreferZero;
+    @ApiModelProperty(value = "Connector ID")
+    private Integer connectorId;
 
-    public enum Strategy {
-        PreferZero,
-        PreferOthersWithStatusOfZero;
+    public ApiMeterValues(String chargeBoxId, Integer connectorId) {
+        this.chargeBoxId = chargeBoxId;
+        this.connectorId = connectorId;
     }
+
 }

@@ -20,6 +20,8 @@ package de.rwth.idsg.steve.repository.impl;
 
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.Striped;
+import com.mysql.cj.conf.StringProperty;
+
 import de.rwth.idsg.steve.SteveException;
 import de.rwth.idsg.steve.ocpp.OcppProtocol;
 import de.rwth.idsg.steve.repository.OcppServerRepository;
@@ -36,6 +38,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ocpp.cs._2015._10.MeterValue;
+import org.jooq.Table;
+import static org.jooq.impl.DSL.*;
+import org.jooq.*;
 import org.joda.time.DateTime;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
@@ -206,6 +211,60 @@ public class OcppServerRepositoryImpl implements OcppServerRepository {
                 log.error("Exception occurred", e);
             }
         });
+    }
+
+    // Find the last transaction for a given charge point and return last 
+    @Override
+    public String getNewestMeterValuesJSON(String chargeBoxIdentity, Integer connectorId) {
+        //StringProperty json_output = new StringProperty();
+        final String[] json_output = {null};
+        ctx.transaction(configuration -> {
+            try {
+                DSLContext ctx = DSL.using(configuration);
+
+                // First, get connector primary key from transaction table
+                int connectorPk = ctx.select(CONNECTOR.CONNECTOR_PK)
+                                     .from(CONNECTOR)
+                                     .where(CONNECTOR.CHARGE_BOX_ID.equal(chargeBoxIdentity))
+                                     .and(CONNECTOR.CONNECTOR_ID.equal(connectorId))
+                                     .fetchOne()
+                                     .value1();
+                // Alias for the main table
+                Table<?> t1 = table("connector_meter_value").as("t1");
+
+                // Subquery for getting the max timestamp per measurand
+                Table<?> t2 = ctx
+                    .select(field("measurand"), max(field("value_timestamp")).as("max_timestamp"))
+                    .from("connector_meter_value")
+                    .groupBy(field("measurand"))
+                    .asTable("t2");
+
+                // Main query
+                json_output[0] =  ctx.select(
+                        field("t1.measurand"),
+                        field("t1.value"),
+                        field("t1.value_timestamp"),
+                        field("t1.unit"),
+                        field("t1.phase"),
+                        field("t1.reading_context"),
+                        field("t1.format"),
+                        field("t1.location")
+                    )
+                    .from(t1)
+                    .join(t2)
+                    .on(field("t1.measurand").eq(field("t2.measurand"))
+                        .and(field("t1.value_timestamp").eq(field("t2.max_timestamp"))))
+                    .where(field("t1.connector_pk").eq(connectorPk))
+                    .fetch()
+                    .formatJSON();
+
+               // batchInsertMeterValues(ctx, list, connectorPk, transactionId);
+            } catch (Exception e) {
+                log.error("Exception occurred", e);
+                json_output[0] = "{\"message\": \"Error occurred.\"}";
+            }
+        });
+        return json_output[0];
     }
 
     @Override

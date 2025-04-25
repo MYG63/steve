@@ -1,6 +1,6 @@
 /*
  * SteVe - SteckdosenVerwaltung - https://github.com/steve-community/steve
- * Copyright (C) 2013-2025 SteVe Community Team
+ * Copyright (C) 2013-2024 SteVe Community Team
  * All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,30 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package de.rwth.idsg.steve.web.dto;
+package de.rwth.idsg.steve.web.api.dto;
 
+//import de.rwth.idsg.steve.ocpp.OcppTransport;
 import io.swagger.annotations.ApiModelProperty;
+//import java.util.Collections;
+//import java.util.List;
 import lombok.Getter;
+//import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
- * @author Sevket Goekay <sevketgokay@gmail.com>
- * @since 18.09.2018
+ * @author fnkbsi
+ * @since 18.10.2023
  */
+
 @Getter
 @Setter
-@ToString
-public class ConnectorStatusForm {
-    @ApiModelProperty(value = "Charge Box Id")
+//@RequiredArgsConstructor
+public class ApiChargePointStart {
+    @ApiModelProperty(value = "Charge Box ID")
     private String chargeBoxId;
-    @ApiModelProperty(value = "Connector Status")
-    private String status;
-    @ApiModelProperty(value = "Strategy of listing the connector")
-    private Strategy strategy = Strategy.PreferZero;
+    @ApiModelProperty(value = "Connector ID")
+    private Integer connectorId;
+    @ApiModelProperty(value = "OCPP Tag")
+    private String ocppTag;
 
-    public enum Strategy {
-        PreferZero,
-        PreferOthersWithStatusOfZero;
+    public ApiChargePointStart(String chargeBoxId, Integer connectorId, String ocppTag) {
+        this.chargeBoxId = chargeBoxId;
+        this.connectorId = connectorId;
+        this.ocppTag = ocppTag;
     }
+
 }
