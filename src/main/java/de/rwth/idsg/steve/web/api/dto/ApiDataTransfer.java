@@ -18,7 +18,8 @@
  */
 package de.rwth.idsg.steve.web.api.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+//import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,13 +32,13 @@ import lombok.Setter;
 @Setter
 //@RequiredArgsConstructor
 public class ApiDataTransfer {
-    @ApiModelProperty(value = "Charge Box ID")
+    @Schema(description = "Charge Box ID")
     private String chargeBoxId;
-    @ApiModelProperty(value = "Vendor ID")
+    @Schema(description = "Vendor ID")
     private String vendorId;
-    @ApiModelProperty(value = "Message ID")
+    @Schema(description = "Message ID")
     private String messageId;
-    @ApiModelProperty(value = "Data")
+    @Schema(description = "Data")
     private String data;
 
     public ApiDataTransfer(String chargeBoxId, String vendorId, String messageId, String data) {

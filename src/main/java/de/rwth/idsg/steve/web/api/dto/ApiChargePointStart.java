@@ -18,13 +18,20 @@
  */
 package de.rwth.idsg.steve.web.api.dto;
 
+import java.util.Objects;
+
 //import de.rwth.idsg.steve.ocpp.OcppTransport;
-import io.swagger.annotations.ApiModelProperty;
-//import java.util.Collections;
-//import java.util.List;
+//import io.swagger.annotations.ApiModelProperty;
+//import io.swagger.v3.oas.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-//import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author fnkbsi
@@ -33,19 +40,43 @@ import lombok.Setter;
 
 @Getter
 @Setter
-//@RequiredArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class ApiChargePointStart {
-    @ApiModelProperty(value = "Charge Box ID")
+    //@JsonIgnore
+    @Schema(description = "Charge Box ID")
     private String chargeBoxId;
-    @ApiModelProperty(value = "Connector ID")
+    @Schema(description = "Connector ID")
     private Integer connectorId;
-    @ApiModelProperty(value = "OCPP Tag")
+    @Schema(description = "OCPP Tag")
     private String ocppTag;
 
-    public ApiChargePointStart(String chargeBoxId, Integer connectorId, String ocppTag) {
-        this.chargeBoxId = chargeBoxId;
-        this.connectorId = connectorId;
-        this.ocppTag = ocppTag;
-    }
+    // public Integer getConnectorId() {
+    //     return Objects.requireNonNullElse(connectorId, 1);
+    // }
+
+    // @JsonCreator
+    // public ApiChargePointStart(
+    //     @JsonProperty("chargeBoxId") String chargeBoxId, 
+    //     @JsonProperty("connectorId") Integer connectorId, 
+    //     @JsonProperty("ocppTag") String ocppTag
+    // ) {
+    //     this.chargeBoxId = chargeBoxId;
+    //     this.connectorId = connectorId;
+    //     this.ocppTag = ocppTag;
+    // }
+
+    //public ApiChargePointStart() {}
+
+    // @JsonCreator
+    // public ApiChargePointStart( 
+    //     @JsonProperty("chargeBoxId") String chargeBoxId, 
+    //     @JsonProperty("connectorId") Integer connectorId, 
+    //     @JsonProperty("ocppTag") String ocppTag
+    // ) {
+    //     this.chargeBoxId = chargeBoxId;
+    //     this.connectorId = connectorId;
+    //     this.ocppTag = ocppTag;
+    // }
 
 }

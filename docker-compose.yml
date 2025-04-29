@@ -1,4 +1,4 @@
-version: "3.0"
+#version: "3.0"
 
 volumes:
   db-data:
@@ -7,12 +7,13 @@ volumes:
 services:
 
   db:
-    # Pinning MariaDB to point release 10.4.30 works around the issues with the
-    # database migrations seen with 10.4.31 in issue #1212.
-    #
-    # TODO: Get database migrations to work with the latest point releases of
-    # MariaDB 10.4.
-    image: mariadb:10.4.30
+
+    image: mariadb:11.2
+    #image: mariadb:11.6
+    #image: mariadb:10.4.30
+
+    container_name: mariadb
+
     restart: unless-stopped
     ports:
       - 3306:3306
@@ -21,6 +22,11 @@ services:
       MYSQL_DATABASE: stevedb
       MYSQL_USER: steve
       MYSQL_PASSWORD: changeme
+    volumes:
+      - /srv/stevetest/mariadb/logs:/var/log/mysql
+      - /srv/stevetest/mariadb/config:/etc/mysql/conf.d
+      - /srv/stevetest/mariadb/data/databases:/var/lib/mysql
+
   app:
     restart: unless-stopped
     build: .

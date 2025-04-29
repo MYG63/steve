@@ -42,11 +42,14 @@ import de.rwth.idsg.steve.repository.ChargePointRepository;
 import de.rwth.idsg.steve.repository.ChargingProfileRepository;
 
 import de.rwth.idsg.steve.repository.dto.ChargePointSelect;
-import de.rwth.idsg.steve.service.ChargePointService12_Client;
-import de.rwth.idsg.steve.service.ChargePointService15_Client;
-import de.rwth.idsg.steve.service.ChargePointService16_Client;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+//import de.rwth.idsg.steve.service.ChargePointService12_Client;
+//import de.rwth.idsg.steve.service.ChargePointService15_Client;
+//import de.rwth.idsg.steve.service.ChargePointService16_Client;
+import de.rwth.idsg.steve.service.ChargePointServiceClient;
+//import io.swagger.annotations.ApiResponse;
+//import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -56,7 +59,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import de.rwth.idsg.steve.web.api.ApiControllerAdvice.ApiErrorResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+//import javax.validation.Valid;
 
 import java.util.List;
 
@@ -78,17 +85,21 @@ public class TaskRestController {
     @Autowired private Ocpp15WebSocketEndpoint ocpp15WebSocketEndpoint;
     @Autowired private Ocpp16WebSocketEndpoint ocpp16WebSocketEndpoint;
     */
-    @Autowired
-    @Qualifier("ChargePointService12_Client")
-    private ChargePointService12_Client client12;
+    // @Autowired
+    // @Qualifier("ChargePointService12_Client")
+    // private ChargePointService12_Client client12;
 
-    @Autowired
-    @Qualifier("ChargePointService15_Client")
-    private ChargePointService15_Client client15;
+    // @Autowired
+    // @Qualifier("ChargePointService15_Client")
+    // private ChargePointService15_Client client15;
 
-    @Autowired
-    @Qualifier("ChargePointService16_Client")
-    private ChargePointService16_Client client16;
+    // @Autowired
+    // @Qualifier("ChargePointService16_Client")
+    // private ChargePointService16_Client client16;
+
+    //@Autowired
+    //@Qualifier("ChargePointServiceClient")
+    @Autowired private ChargePointServiceClient client;
 
     // -------------------------------------------------------------------------
     // Helpers
@@ -111,10 +122,10 @@ public class TaskRestController {
     // -------------------------------------------------------------------------
 
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request", response = ApiErrorResponse.class),
-        @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
-        @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))})}
     )
     @GetMapping(value = "taskoverview")
     @ResponseBody
@@ -124,10 +135,10 @@ public class TaskRestController {
 
 
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request", response = ApiErrorResponse.class),
-        @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
-        @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))})}
     )
     @PostMapping(value = "clearfinishedtasks")
     @ResponseBody
@@ -137,28 +148,28 @@ public class TaskRestController {
     }
 
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request", response = ApiErrorResponse.class),
-        @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
-        @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))})}
     )
     @GetMapping(value = "task")
     @ResponseBody
-    public ApiTaskInfo getTaskDetails(@Valid Integer taskId) {
+    public ApiTaskInfo getTaskDetails(Integer taskId) {
         ApiTaskInfo taskInfo = new ApiTaskInfo(taskId, taskStore.get(taskId));
         return taskInfo;
     }
 
     // RS kamaste.it 08.2024
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request", response = ApiErrorResponse.class),
-        @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
-        @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))})}
     )
     @PostMapping(value = "createdatatransfertask")
     @ResponseBody
-    public Integer createDataTransferTask(@Valid ApiDataTransfer params) {
+    public Integer createDataTransferTask(ApiDataTransfer params) {
         log.info("Received createdatatransfertask POST request via API! ");
         
         List<ChargePointSelect> cps = chargePointRepository.getChargePointSelect(params.getChargeBoxId());
@@ -174,8 +185,8 @@ public class TaskRestController {
 
             Integer taskId;
             taskId = switch (ocppProtocol) {
-                case "OCPP1.6J", "OCPP1.6S" -> client16.dataTransfer(transactionParams);
-                case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> client15.dataTransfer(transactionParams);
+                case "OCPP1.6J", "OCPP1.6S" -> client.dataTransfer(transactionParams);
+                case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> client.dataTransfer(transactionParams);
                 //case "OCPP1.2" -> client12.dataTransfer(transactionParams, "SteveWebApi");
                 //default -> client12.dataTransfer(transactionParams, "SteveWebApi");
                 case "OCPP1.2" -> -1;
@@ -195,14 +206,14 @@ public class TaskRestController {
 
     // RS create SetChargingProfile task
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request", response = ApiErrorResponse.class),
-        @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
-        @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))})}
     )
     @PostMapping(value = "createsetchargingprofiletask")
     @ResponseBody
-    public Integer createSetChargingProfileTask(@Valid ApiChargingProfile params) {
+    public Integer createSetChargingProfileTask(ApiChargingProfile params) {
         log.info("Received createsetchargingprofiletask POST request via API! ");
         
         List<ChargePointSelect> cps = chargePointRepository.getChargePointSelect(params.getChargeBoxId());
@@ -217,7 +228,7 @@ public class TaskRestController {
 
             Integer taskId;
             taskId = switch (ocppProtocol) {
-                case "OCPP1.6J", "OCPP1.6S" -> client16.setChargingProfile(transactionParams);
+                case "OCPP1.6J", "OCPP1.6S" -> client.setChargingProfile(transactionParams);
                 //case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> client15.setChargingProfile(transactionParams);
                 case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> -1;
                 //case "OCPP1.2" -> client12.dataTransfer(transactionParams, "SteveWebApi");
@@ -237,14 +248,14 @@ public class TaskRestController {
 
     // RS create ClearChargingProfile task
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request", response = ApiErrorResponse.class),
-        @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
-        @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))})}
     )
     @PostMapping(value = "createclearchargingprofiletask")
     @ResponseBody
-    public Integer createClearChargingProfileTask(@Valid ApiChargingProfile params) {
+    public Integer createClearChargingProfileTask(ApiChargingProfile params) {
         log.info("Received createclearchargingprofiletask POST request via API! ");
         
         List<ChargePointSelect> cps = chargePointRepository.getChargePointSelect(params.getChargeBoxId());
@@ -259,7 +270,7 @@ public class TaskRestController {
             transactionParams.setFilterType(ClearChargingProfileFilterType.ChargingProfileId);
             Integer taskId;
             taskId = switch (ocppProtocol) {
-                case "OCPP1.6J", "OCPP1.6S" -> client16.clearChargingProfile(transactionParams);
+                case "OCPP1.6J", "OCPP1.6S" -> client.clearChargingProfile(transactionParams);
                 //case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> client15.setChargingProfile(transactionParams);
                 case "OCPP1.5J", "OCPP1.5S", "OCPP1.5" -> -1;
                 //case "OCPP1.2" -> client12.dataTransfer(transactionParams, "SteveWebApi");

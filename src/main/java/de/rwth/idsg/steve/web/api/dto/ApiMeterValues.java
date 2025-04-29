@@ -18,7 +18,9 @@
  */
 package de.rwth.idsg.steve.web.api.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+//import io.swagger.annotations.ApiModelProperty;
+//import io.swagger.v3.oas.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,9 +33,9 @@ import lombok.Setter;
 @Setter
 //@RequiredArgsConstructor
 public class ApiMeterValues {
-    @ApiModelProperty(value = "Charge Box ID")
+    @Schema(description = "Charge Box ID")
     private String chargeBoxId;
-    @ApiModelProperty(value = "Connector ID")
+    @Schema(description = "Connector ID")
     private Integer connectorId;
 
     public ApiMeterValues(String chargeBoxId, Integer connectorId) {

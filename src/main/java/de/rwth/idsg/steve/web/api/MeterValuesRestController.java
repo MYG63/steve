@@ -43,11 +43,14 @@ import de.rwth.idsg.steve.repository.ChargePointRepository;
 //import de.rwth.idsg.steve.repository.ChargingProfileRepository;
 import de.rwth.idsg.steve.repository.OcppServerRepository;
 import de.rwth.idsg.steve.repository.dto.ChargePointSelect;
-import de.rwth.idsg.steve.service.ChargePointService12_Client;
-import de.rwth.idsg.steve.service.ChargePointService15_Client;
-import de.rwth.idsg.steve.service.ChargePointService16_Client;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+//import de.rwth.idsg.steve.service.ChargePointService12_Client;
+//import de.rwth.idsg.steve.service.ChargePointService15_Client;
+//import de.rwth.idsg.steve.service.ChargePointService16_Client;
+import de.rwth.idsg.steve.service.ChargePointServiceClient;
+//import io.swagger.annotations.ApiResponse;
+//import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -56,8 +59,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import de.rwth.idsg.steve.ocpp.OcppProtocol;
 
-import javax.validation.Valid;
+import de.rwth.idsg.steve.web.api.ApiControllerAdvice.ApiErrorResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import de.rwth.idsg.steve.ocpp.OcppProtocol;
+
+//import javax.validation.Valid;
 
 import java.util.List;
 
@@ -79,17 +89,21 @@ public class MeterValuesRestController {
     @Autowired private Ocpp15WebSocketEndpoint ocpp15WebSocketEndpoint;
     @Autowired private Ocpp16WebSocketEndpoint ocpp16WebSocketEndpoint;
     */
-    @Autowired
-    @Qualifier("ChargePointService12_Client")
-    private ChargePointService12_Client client12;
+    // @Autowired
+    // @Qualifier("ChargePointService12_Client")
+    // private ChargePointService12_Client client12;
 
-    @Autowired
-    @Qualifier("ChargePointService15_Client")
-    private ChargePointService15_Client client15;
+    // @Autowired
+    // @Qualifier("ChargePointService15_Client")
+    // private ChargePointService15_Client client15;
 
-    @Autowired
-    @Qualifier("ChargePointService16_Client")
-    private ChargePointService16_Client client16;
+    // @Autowired
+    // @Qualifier("ChargePointService16_Client")
+    // private ChargePointService16_Client client16;
+
+    // @Autowired
+    // @Qualifier("ChargePointServiceClient")
+    // private ChargePointServiceClient client;
 
     @Autowired private OcppServerRepository ocppServerRepository;
 
@@ -106,6 +120,10 @@ public class MeterValuesRestController {
     private String getOcppProtocol(String chargeBoxId) {
         ChargePointQueryForm form = new ChargePointQueryForm();
         form.setChargeBoxId(chargeBoxId);
+        //String ocppVersion = chargePointRepository.getOverview(form).get(0).getOcppProtocol();
+        //log.warn(ocppVersion);
+        
+        //return chargePointRepository.getOverview(form).get(0).getOcppProtocol();//.getVersion().toProtocol();//.toUpperCase();
         return chargePointRepository.getOverview(form).get(0).getOcppProtocol().toUpperCase();
     }
 
@@ -126,21 +144,22 @@ public class MeterValuesRestController {
      *   - return MeterValues
      */
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request", response = ApiErrorResponse.class),
-        @ApiResponse(code = 401, message = "Unauthorized", response = ApiErrorResponse.class),
-        @ApiResponse(code = 500, message = "Internal Server Error", response = ApiErrorResponse.class)}
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))})}
     )
     @GetMapping(value = "newest")
     @ResponseBody
-    public String getNewestMeterValues(@Valid ApiMeterValues params) {
+    public String getNewestMeterValues(ApiMeterValues params) {
         log.info("Received metervalues get request via API! ");
         
+        String ocppProtocol = getOcppProtocol(params.getChargeBoxId());
+        //List<ChargePointSelect> cps = chargePointRepository.getChargePointSelect(ocppProtocol, "", params.getChargeBoxId());
         List<ChargePointSelect> cps = chargePointRepository.getChargePointSelect(params.getChargeBoxId());
         
         for (ChargePointSelect chargepoint : cps) {
             String chargeBoxId = chargepoint.getChargeBoxId();
-            //String ocppProtocol = getOcppProtocol(chargeBoxId);
             Integer connectorId = params.getConnectorId();
 
             return ocppServerRepository.getNewestMeterValuesJSON(chargeBoxId, connectorId);

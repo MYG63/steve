@@ -70,10 +70,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ocpp.cp._2015._10.ChargingProfilePurposeType;
 import ocpp.cp._2015._10.GetCompositeScheduleResponse;
+
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import org.springframework.stereotype.Component;
 
 /**
  * @author Sevket Goekay <sevketgokay@gmail.com>
@@ -81,6 +84,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@Component
 @RequiredArgsConstructor
 public class ChargePointServiceClient {
 
